@@ -1,7 +1,7 @@
 # Bobathon Submission Template — Complete Guide
 
 This guide explains how to use the
-[bobathon-submission-template](https://github.com/drijesh-ppatel/bobathon-submission-template)
+[bob-ai-hackathon-submission-template](https://github.com/drijesh-ppatel/bob-ai-hackathon-submission-template)
 to structure and submit your hackathon entry.
 
 ---
@@ -42,23 +42,23 @@ The template gives every team a consistent, well-structured repository so that:
 
 ### Step 1 — Create your repo from the template
 
-1. Go to **[github.com/drijesh-ppatel/bobathon-submission-template](https://github.com/drijesh-ppatel/bobathon-submission-template)**
+1. Go to **[github.com/drijesh-ppatel/bob-ai-hackathon-submission-template](https://github.com/drijesh-ppatel/bob-ai-hackathon-submission-template)**
 2. Click the green **"Use this template"** button → **"Create a new repository"**
 
    > ⚠️ Use **"Use this template"**, not "Fork". A fork shows as derived from the
    > template in GitHub's UI and carries unnecessary history. The template button
    > gives you a clean, independent repo.
 
-3. Name your repo: **`bobathon-[your-team-name]`**
-   (e.g., `bobathon-orion-squad`, `bobathon-team-phoenix`)
+3. Name your repo: **`bob-ai-hackathon-[your-team-name]`**
+   (e.g., `bob-ai-hackathon-orion-squad`, `bob-ai-hackathon-team-phoenix`)
 4. Set visibility to **Public** — judges need to access it
 5. Click **"Create repository"**
 
 ### Step 2 — Clone your new repo locally
 
 ```bash
-git clone https://github.com/[your-github-username]/bobathon-[your-team-name].git
-cd bobathon-[your-team-name]
+git clone https://github.com/[your-github-username]/bob-ai-hackathon-[your-team-name].git
+cd bob-ai-hackathon-[your-team-name]
 ```
 
 ### Step 3 — Fill in your content (see section 4 below)
@@ -80,7 +80,7 @@ Then go to your repo → **Actions** tab → confirm **✅ Validate Submission**
 ## 3. Repository Structure
 
 ```
-bobathon-[your-team-name]/
+bob-ai-hackathon-[your-team-name]/
 │
 ├── submission.yaml          ← Structured metadata — READ BY EVALUATORS FIRST
 ├── README.md                ← Project overview — human-readable entry point

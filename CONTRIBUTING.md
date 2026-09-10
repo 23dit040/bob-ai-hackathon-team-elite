@@ -9,8 +9,8 @@ The judges depend on this structure to review your entry — deviations may affe
 
 1. Click the **"Use this template"** button at the top of this repository
    (or **Fork** if you prefer)
-2. Name your repository: `hackathon-[your-team-name]`
-   (e.g., `hackathon-orion-squad`)
+2. Name your repository: `bob-ai-hackathon-[your-team-name]`
+   (e.g., `bob-ai-hackathon-orion-squad`)
 3. Set visibility to **Public** so judges can access it
 4. Click **Create repository**
 
@@ -19,8 +19,8 @@ The judges depend on this structure to review your entry — deviations may affe
 ## Step 2 — Clone Your Fork Locally
 
 ```bash
-git clone https://github.com/[your-org]/hackathon-[your-team-name].git
-cd hackathon-[your-team-name]
+git clone https://github.com/[your-org]/bob-ai-hackathon-[your-team-name].git
+cd bob-ai-hackathon-[your-team-name]
 ```
 
 ---
@@ -89,7 +89,7 @@ yq '.' submission.yaml   # checks YAML is valid
 Once validation passes:
 
 1. Copy your repository URL:
-   `https://github.com/[your-org]/hackathon-[your-team-name]`
+   `https://github.com/[your-org]/bob-ai-hackathon-[your-team-name]`
 
 2. Submit it via the **official entry form** at:
    `[ORGANIZER: INSERT FORM URL HERE]`
