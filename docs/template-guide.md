@@ -146,16 +146,10 @@ submission:
     - "Root cause classification using watsonx.ai Granite 3.0"
     - "Natural language incident summaries via IBM Bob integration"
     - "One-click runbook execution"
-
-consent:
-  publish_results: true                  # Must be true to submit
-  submitted_at: "2025-07-15T17:59:00Z"  # Your actual submission time
 ```
 
 **Rules:**
 - Every field marked `# REQUIRED` must be filled — blank strings will fail validation
-- `consent.publish_results` must be `true` or your entry will not be evaluated
-- `submitted_at` must be an ISO 8601 timestamp (e.g., `2025-07-15T18:00:00Z`)
 - Do not rename this file
 
 ---
@@ -303,7 +297,6 @@ Every push to your repo triggers the **Validate Submission** GitHub Action
 
 - `submission.yaml` exists and is valid YAML
 - Required fields in `submission.yaml` are not empty
-- `consent.publish_results` is `true`
 - `docs/setup-guide.md` exists
 - `demo/demo-video-link.txt` exists
 
@@ -324,8 +317,6 @@ Work through this before clicking submit:
 
 **Content**
 - [ ] `submission.yaml` — all `# REQUIRED` fields filled
-- [ ] `submission.yaml` — `consent.publish_results: true`
-- [ ] `submission.yaml` — `submitted_at` set to your actual submission time
 - [ ] `README.md` — no `[placeholder]` text remaining
 - [ ] `docs/problem-statement.md` — written (not template text)
 - [ ] `docs/solution-overview.md` — written (not template text)
@@ -376,7 +367,6 @@ Entries are scored on 6 criteria totalling **100 points**:
 | Leaving `[placeholder]` text in README | Search the file for `[` before pushing |
 | Committing `.env` with real credentials | Check `.gitignore` includes `.env`; use `git status` |
 | `demo-video-link.txt` still has the placeholder URL | Open the file and replace it with your real link |
-| `consent.publish_results: false` | Must be `true` — entries with `false` are not evaluated |
 | Repository set to Private | Judges cannot access private repos — set to Public |
 | `src/` is empty or has only boilerplate | Your source code must be in `src/` |
 | Setup guide missing key steps | Test it yourself on a fresh terminal before submitting |
@@ -415,7 +405,6 @@ your repo at the deadline, not the first push.
 Click the failing run in the Actions tab, read the error message, and
 fix the issue it describes. The most common causes are:
 - Missing or empty required fields in `submission.yaml`
-- `consent.publish_results` still set to `false`
 - `submission.yaml` has invalid YAML syntax (check indentation and quotes)
 
 **Q: Do we need to keep `CONTRIBUTING.md`?**

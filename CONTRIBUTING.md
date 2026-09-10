@@ -35,7 +35,6 @@ This is the most important file. Judges use it to get an overview of your entry.
 - Open [`submission.yaml`](submission.yaml)
 - Fill in **every field marked `# REQUIRED`**
 - Read the inline comments — they explain what each field expects
-- Set `consent.publish_results: true` when you're ready to submit
 
 ### 3b. `README.md`
 - Replace every `[placeholder in brackets]` with your actual content
@@ -104,7 +103,7 @@ Once validation passes:
 
 ## Checklist Before You Submit
 
-- [ ] `submission.yaml` — all required fields filled, `consent.publish_results: true`
+- [ ] `submission.yaml` — all required fields filled
 - [ ] `README.md` — no `[placeholder]` text remaining
 - [ ] `docs/setup-guide.md` — someone else can run your project using these instructions
 - [ ] `src/` — all source code committed (no `node_modules`, no `.env`)

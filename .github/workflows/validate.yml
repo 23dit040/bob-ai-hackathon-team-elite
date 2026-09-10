@@ -81,12 +81,6 @@ jobs:
             ERRORS+=("❌ team.track must be one of: AI | DevOps | Sustainability | Open (got: $TRACK)")
           fi
 
-          # Check consent
-          CONSENT=$(yq '.consent.publish_results' submission.yaml)
-          if [ "$CONSENT" != "true" ]; then
-            ERRORS+=("❌ consent.publish_results must be set to true")
-          fi
-
           # Check at least one key feature
           FEATURES=$(yq '.submission.key_features | length' submission.yaml)
           if [ "$FEATURES" -lt 1 ]; then

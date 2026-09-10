@@ -6,7 +6,6 @@
 #   - Optional fields can be left as empty strings ""
 #   - Do NOT rename this file — the evaluation pipeline reads it by name
 #   - Use double quotes around all string values
-#   - submitted_at: set this to your actual submission time (ISO 8601 format)
 # =============================================================================
 
 team:
@@ -68,10 +67,3 @@ artifacts:
   live_demo: "demo/live-demo-url.txt"      # URL to deployed demo (optional)
   screenshots: "demo/screenshots/"
   presentation: "presentation/"
-
-# =============================================================================
-# CONSENT & SUBMISSION
-# =============================================================================
-consent:
-  publish_results: false               # REQUIRED — set to true to consent to results being published
-  submitted_at: ""                     # REQUIRED — e.g., "2025-01-15T18:00:00Z"
