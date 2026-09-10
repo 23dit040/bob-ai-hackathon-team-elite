@@ -94,4 +94,3 @@ logs/
 .terraform/
 *.tfstate
 *.tfstate.backup
-.github/workflows/
