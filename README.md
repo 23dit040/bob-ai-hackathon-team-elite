@@ -77,7 +77,7 @@
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/[your-org]/[your-repo].git
+git clone https://github.com/[your-repo].git
 cd [your-repo]
 
 # 2. Install dependencies
@@ -119,5 +119,3 @@ cp .env.example .env
 [Tell the judges what part of your submission is strongest and worth paying close attention to.]
 
 ---
-
-*Submission template provided by [Hackathon Organizer].*
