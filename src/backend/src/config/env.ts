@@ -4,7 +4,7 @@ import { z } from 'zod';
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   BACKEND_PORT: z.string().default('3001').transform(Number),
-  MONGODB_URI: z.string().default('mongodb://admin:changeme@localhost:27017/ctrm?authSource=admin'),
+  MONGODB_URI: z.string().default('mongodb://localhost:27017/ctrm'),
   REDIS_URL: z.string().default('redis://localhost:6379'),
   CHROMA_URL: z.string().default('http://localhost:8000'),
   CHROMA_COLLECTION: z.string().default('protocol_deviations'),
