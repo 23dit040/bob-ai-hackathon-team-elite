@@ -12,9 +12,7 @@ team:
     - name: "Drijesh Patel"
       email: "23dit040@charusat.edu.in"
     - name: "Ayush Patel"
-      email: "23dit040@charusat.edu.in"
-    - name: "Team Elite Member 3"
-      email: "teamelite@charusat.edu.in"
+      email: "23dit041@charusat.edu.in"
 
 submission:
   title: "Clinical Trial Risk Monitor & Protocol Deviation Detector"
