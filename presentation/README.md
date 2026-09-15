@@ -28,3 +28,7 @@ pipeline can locate it reliably.
 - One idea per slide
 - Font size minimum 24pt for readability
 - Do not paste large code blocks into slides — reference the repo instead
+
+
+
+URL : https://docs.google.com/presentation/d/1aUJyuStu1P6eg2PhgRQf8iVjbJW874Ro/edit?usp=sharing&ouid=115076051954217235356&rtpof=true&sd=true
