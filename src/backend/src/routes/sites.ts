@@ -1,36 +1,71 @@
 import { Router } from 'express';
+import { z } from 'zod';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { riskScoreService } from '../services/RiskScoreService.js';
+import { Site } from '../models/Site.js';
+import { ValidationError } from '../utils/errors.js';
 
 const router = Router();
 
-router.get('/', (_req, res) => {
-  res.json({ success: true, data: [], meta: { total: 0, page: 1, limit: 50 } });
+const listQuerySchema = z.object({
+  page: z.string().default('1').transform(Number),
+  limit: z.string().default('50').transform(Number),
 });
 
-router.get('/high-risk', (_req, res) => {
-  res.json({ success: true, data: [] });
+const highRiskQuerySchema = z.object({
+  limit: z.string().default('50').transform(Number),
+  threshold: z.string().default('50').transform(Number),
 });
 
-router.get('/:siteId', (_req, res) => {
-  res.json({ success: true, data: null });
-});
+/** GET /api/sites — list all sites */
+router.get(
+  '/',
+  asyncHandler(async (req, res) => {
+    const q = listQuerySchema.safeParse(req.query);
+    if (!q.success) throw new ValidationError(q.error.message);
+    const { page, limit } = q.data;
+    const skip = (page - 1) * limit;
+    const [sites, total] = await Promise.all([
+      Site.find().skip(skip).limit(limit).lean(),
+      Site.countDocuments(),
+    ]);
+    res.json({ success: true, data: sites, meta: { total, page, limit } });
+  }),
+);
 
-router.get('/:siteId/risk', (_req, res) => {
-  res.json({
-    success: true,
-    data: {
-      siteId: _req.params['siteId'],
-      riskScore: 0,
-      riskTier: 'low',
-      totalDeviations: 0,
-      majorDeviations: 0,
-      minorDeviations: 0,
-      administrativeDeviations: 0,
-      deviationRate: 0,
-      openDeviations: 0,
-      lastCalculatedAt: new Date().toISOString(),
-      trend: 'stable',
-    },
-  });
-});
+/** GET /api/sites/high-risk — ranked high-risk sites */
+router.get(
+  '/high-risk',
+  asyncHandler(async (req, res) => {
+    const q = highRiskQuerySchema.safeParse(req.query);
+    if (!q.success) throw new ValidationError(q.error.message);
+    const sites = await riskScoreService.listHighRiskSites({ limit: q.data.limit, threshold: q.data.threshold });
+    res.json({ success: true, data: sites });
+  }),
+);
+
+/** GET /api/sites/:siteId — single site */
+router.get(
+  '/:siteId',
+  asyncHandler(async (req, res) => {
+    const { siteId } = req.params as { siteId: string };
+    const site = await Site.findOne({ siteId }).lean();
+    if (!site) {
+      res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: `Site ${siteId} not found` } });
+      return;
+    }
+    res.json({ success: true, data: site });
+  }),
+);
+
+/** GET /api/sites/:siteId/risk — calculated risk score */
+router.get(
+  '/:siteId/risk',
+  asyncHandler(async (req, res) => {
+    const { siteId } = req.params as { siteId: string };
+    const score = await riskScoreService.calculateSiteRiskScore(siteId);
+    res.json({ success: true, data: score });
+  }),
+);
 
 export { router as sitesRouter };

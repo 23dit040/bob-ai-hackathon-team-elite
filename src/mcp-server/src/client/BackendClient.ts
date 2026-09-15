@@ -19,25 +19,42 @@ export class BackendClient {
     const url = `${this.baseUrl}${path}`;
     logger.debug({ url, method: options.method ?? 'GET' }, 'BackendClient request');
 
-    const res = await fetch(url, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        ...(options.headers ?? {}),
-      },
-    });
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-    const body = await res.json() as { success: boolean; data?: T; error?: { code: string; message: string } };
+      const res = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          ...(options.headers ?? {}),
+        },
+      }).finally(() => clearTimeout(timeoutId));
 
-    if (!res.ok || !body.success) {
-      const message = body.error?.message ?? `HTTP ${res.status}`;
-      const code = body.error?.code ?? 'BACKEND_ERROR';
-      logger.error({ url, status: res.status, code }, message);
-      throw new Error(`[${code}] ${message}`);
+      const body = (await res.json()) as {
+        success: boolean;
+        data?: T;
+        error?: { code: string; message: string };
+      };
+
+      if (!res.ok || !body.success) {
+        const message = body.error?.message ?? `HTTP ${res.status}`;
+        const code = body.error?.code ?? 'BACKEND_ERROR';
+        logger.error({ url, status: res.status, code }, message);
+        throw new Error(`[${code}] ${message}`);
+      }
+
+      return body.data as T;
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message.startsWith('[')) {
+        throw err;
+      }
+      const message = err instanceof Error ? err.message : String(err);
+      logger.error({ url, err: message }, 'Backend request failed');
+      throw new Error(`[SERVICE_UNAVAILABLE] Failed to connect to backend: ${message}`);
     }
-
-    return body.data as T;
   }
 
   async getPatients(params: Record<string, string | number | undefined>): Promise<unknown[]> {

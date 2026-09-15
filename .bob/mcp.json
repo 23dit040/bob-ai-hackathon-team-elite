@@ -7,8 +7,10 @@
         "NODE_ENV": "development",
         "MCP_TRANSPORT": "stdio",
         "BACKEND_URL": "http://localhost:3001",
-        "LOG_LEVEL": "info"
-      }
+        "LOG_LEVEL": "info",
+        "MCP_PORT": "3002"
+      },
+      "description": "Clinical Trial Risk Monitor — detects protocol deviations, classifies ICH E6 GCP severity, calculates site risk scores, searches similar historical deviations, and generates CAPA-ready reports. Build first: cd src/mcp-server && npm run build"
     }
   }
 }

@@ -1,13 +1,26 @@
 import { Router } from 'express';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { protocolService } from '../services/ProtocolService.js';
 
 const router = Router();
 
-router.get('/', (_req, res) => {
-  res.json({ success: true, data: [], meta: { total: 0, page: 1, limit: 50 } });
-});
+/** GET /api/protocols — list all protocols */
+router.get(
+  '/',
+  asyncHandler(async (_req, res) => {
+    const protocols = await protocolService.listProtocols();
+    res.json({ success: true, data: protocols, meta: { total: protocols.length } });
+  }),
+);
 
-router.get('/:protocolId', (_req, res) => {
-  res.json({ success: true, data: null });
-});
+/** GET /api/protocols/:protocolId — single protocol */
+router.get(
+  '/:protocolId',
+  asyncHandler(async (req, res) => {
+    const { protocolId } = req.params as { protocolId: string };
+    const protocol = await protocolService.getProtocol(protocolId);
+    res.json({ success: true, data: protocol });
+  }),
+);
 
 export { router as protocolsRouter };

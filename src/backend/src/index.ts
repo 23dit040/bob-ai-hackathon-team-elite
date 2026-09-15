@@ -1,6 +1,7 @@
 import { createApp } from './app.js';
 import { connectMongoDB, disconnectMongoDB } from './db/mongodb.js';
 import { connectRedis, disconnectRedis } from './services/CacheService.js';
+import { seedService } from './services/SeedService.js';
 import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
 
@@ -10,6 +11,13 @@ async function main(): Promise<void> {
   // Connect to databases
   await connectMongoDB();
   await connectRedis();
+
+  // Seed synthetic data on first run (idempotent)
+  if (env.NODE_ENV !== 'test') {
+    seedService.seed().catch((err) => {
+      logger.error({ err }, 'Seed failed — server continues');
+    });
+  }
 
   const app = createApp();
   const server = app.listen(env.BACKEND_PORT, () => {
