@@ -55,11 +55,11 @@ services:
     networks:
       - ctrm-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v2/heartbeat"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/v2/heartbeat || wget -qO- http://localhost:8000/api/v2/heartbeat || exit 1"]
       interval: 15s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
   # ── Application ───────────────────────────────────────────────
 
@@ -93,7 +93,7 @@ services:
       redis:
         condition: service_healthy
       chromadb:
-        condition: service_healthy
+        condition: service_started
     networks:
       - ctrm-net
     command: ["npm", "run", "dev"]
