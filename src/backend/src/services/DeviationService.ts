@@ -50,15 +50,17 @@ export class DeviationService {
   async detectDeviations(params: {
     visitId?: string;
     siteId?: string;
+    patientId?: string;
     from?: string;
     to?: string;
   }): Promise<DeviationDocument[]> {
-    const { visitId, siteId, from, to } = params;
+    const { visitId, siteId, patientId, from, to } = params;
 
     // Build visit query
     const visitFilter: Record<string, unknown> = {};
     if (visitId) visitFilter['visitId'] = visitId;
     if (siteId) visitFilter['siteId'] = siteId;
+    if (patientId) visitFilter['patientId'] = patientId;
     if (from || to) {
       visitFilter['scheduledDate'] = {};
       if (from) (visitFilter['scheduledDate'] as Record<string, unknown>)['$gte'] = new Date(from);

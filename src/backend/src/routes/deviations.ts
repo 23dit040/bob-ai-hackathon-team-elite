@@ -22,11 +22,12 @@ const listQuerySchema = z.object({
 const detectBodySchema = z.object({
   visitId: z.string().optional(),
   siteId: z.string().optional(),
+  patientId: z.string().optional(),
   from: z.string().optional(),
   to: z.string().optional(),
 }).refine(
-  (d) => d.visitId ?? d.siteId ?? d.from ?? d.to,
-  { message: 'Provide at least one of: visitId, siteId, from/to' },
+  (d) => d.visitId ?? d.siteId ?? d.patientId ?? d.from ?? d.to,
+  { message: 'Provide at least one of: visitId, siteId, patientId, from/to' },
 );
 
 const classifyBodySchema = z.object({
@@ -63,7 +64,13 @@ router.post(
   asyncHandler(async (req, res) => {
     const body = detectBodySchema.safeParse(req.body);
     if (!body.success) throw new ValidationError(body.error.message);
-    const deviations = await deviationService.detectDeviations(body.data);
+    const deviations = await deviationService.detectDeviations({
+      visitId: body.data.visitId,
+      siteId: body.data.siteId,
+      patientId: body.data.patientId,
+      from: body.data.from,
+      to: body.data.to,
+    });
     res.json({ success: true, data: deviations });
   }),
 );
