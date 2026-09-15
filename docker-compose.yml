@@ -1,28 +1,10 @@
 name: ctrm
 
+# MongoDB is NOT in Docker — use your local MongoDB (MongoDB Compass on localhost:27017)
+# Only Redis and ChromaDB run in Docker.
+
 services:
   # ── Infrastructure ────────────────────────────────────────────
-
-  mongo:
-    image: mongo:7
-    container_name: ctrm-mongo
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-changeme}
-      MONGO_INITDB_DATABASE: ctrm
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - ctrm-net
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
 
   redis:
     image: redis:7-alpine
@@ -32,8 +14,6 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
-    networks:
-      - ctrm-net
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -52,8 +32,6 @@ services:
       - "8000:8000"
     volumes:
       - chroma-data:/chroma/.chroma
-    networks:
-      - ctrm-net
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8000/api/v2/heartbeat || wget -qO- http://localhost:8000/api/v2/heartbeat || exit 1"]
       interval: 15s
@@ -73,7 +51,8 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-development}
       BACKEND_PORT: 3001
-      MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME:-admin}:${MONGO_INITDB_ROOT_PASSWORD:-changeme}@mongo:27017/ctrm?authSource=admin
+      # Points to host machine's local MongoDB (no auth — Compass default)
+      MONGODB_URI: ${MONGODB_URI:-mongodb://host.docker.internal:27017/ctrm}
       REDIS_URL: redis://redis:6379
       CHROMA_URL: http://chromadb:8000
       CHROMA_COLLECTION: ${CHROMA_COLLECTION:-protocol_deviations}
@@ -88,15 +67,12 @@ services:
     ports:
       - "3001:3001"
     depends_on:
-      mongo:
-        condition: service_healthy
       redis:
         condition: service_healthy
       chromadb:
         condition: service_started
-    networks:
-      - ctrm-net
-    command: ["npm", "run", "dev"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
       interval: 20s
@@ -121,8 +97,6 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-    networks:
-      - ctrm-net
 
   frontend:
     build:
@@ -137,15 +111,8 @@ services:
       - "5173:5173"
     depends_on:
       - backend
-    networks:
-      - ctrm-net
     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 
 volumes:
-  mongo-data:
   redis-data:
   chroma-data:
-
-networks:
-  ctrm-net:
-    driver: bridge
