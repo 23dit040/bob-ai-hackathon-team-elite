@@ -4,13 +4,13 @@
       "command": "node",
       "args": ["src/mcp-server/dist/index.js"],
       "env": {
-        "NODE_ENV": "development",
+        "NODE_ENV": "production",
         "MCP_TRANSPORT": "stdio",
         "BACKEND_URL": "http://localhost:3001",
         "LOG_LEVEL": "info",
         "MCP_PORT": "3002"
       },
-      "description": "Clinical Trial Risk Monitor — detects protocol deviations, classifies ICH E6 GCP severity, calculates site risk scores, searches similar historical deviations, and generates CAPA-ready reports. Build first: cd src/mcp-server && npm run build"
+      "description": "Clinical Trial Risk Monitor — 8 MCP tools: detect deviations, classify ICH E6 GCP severity, score site risk, semantic search, generate CAPA reports. Backend must be running at BACKEND_URL before use."
     }
   }
 }
