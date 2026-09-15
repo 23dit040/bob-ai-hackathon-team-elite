@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "clinical-trial-monitor": {
+      "command": "node",
+      "args": ["src/mcp-server/dist/index.js"],
+      "env": {
+        "NODE_ENV": "development",
+        "MCP_TRANSPORT": "stdio",
+        "BACKEND_URL": "http://localhost:3001",
+        "LOG_LEVEL": "info"
+      }
+    }
+  }
+}

@@ -1,0 +1,151 @@
+name: ctrm
+
+services:
+  # ── Infrastructure ────────────────────────────────────────────
+
+  mongo:
+    image: mongo:7
+    container_name: ctrm-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-changeme}
+      MONGO_INITDB_DATABASE: ctrm
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - ctrm-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  redis:
+    image: redis:7-alpine
+    container_name: ctrm-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - ctrm-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: ctrm-chromadb
+    restart: unless-stopped
+    environment:
+      IS_PERSISTENT: "TRUE"
+      ANONYMIZED_TELEMETRY: "FALSE"
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma-data:/chroma/.chroma
+    networks:
+      - ctrm-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v2/heartbeat"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # ── Application ───────────────────────────────────────────────
+
+  backend:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+      target: builder
+    container_name: ctrm-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      BACKEND_PORT: 3001
+      MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME:-admin}:${MONGO_INITDB_ROOT_PASSWORD:-changeme}@mongo:27017/ctrm?authSource=admin
+      REDIS_URL: redis://redis:6379
+      CHROMA_URL: http://chromadb:8000
+      CHROMA_COLLECTION: ${CHROMA_COLLECTION:-protocol_deviations}
+      LLM_PROVIDER: ${LLM_PROVIDER:-none}
+      WATSONX_API_KEY: ${WATSONX_API_KEY:-}
+      WATSONX_PROJECT_ID: ${WATSONX_PROJECT_ID:-}
+      WATSONX_URL: ${WATSONX_URL:-https://us-south.ml.cloud.ibm.com}
+      WATSONX_MODEL_ID: ${WATSONX_MODEL_ID:-ibm/granite-13b-instruct-v2}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      CORS_ORIGIN: http://localhost:5173
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "3001:3001"
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    networks:
+      - ctrm-net
+    command: ["npm", "run", "dev"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  mcp-server:
+    build:
+      context: ./src/mcp-server
+      dockerfile: Dockerfile
+    container_name: ctrm-mcp-server
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      MCP_PORT: 3002
+      MCP_TRANSPORT: sse
+      BACKEND_URL: http://backend:3001
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "3002:3002"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - ctrm-net
+
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+      target: builder
+    container_name: ctrm-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: ""
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - ctrm-net
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+volumes:
+  mongo-data:
+  redis-data:
+  chroma-data:
+
+networks:
+  ctrm-net:
+    driver: bridge
