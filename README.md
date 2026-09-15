@@ -12,8 +12,8 @@ An AI-powered clinical trial compliance platform that automatically detects prot
 |---|---|
 | **Team Name** | Team Elite |
 | **Track** | AI |
-| **Team Lead** | Drijesh Patel — 23dit040@charusat.edu.in |
-| **Members** | Drijesh Patel, Ayush Patel |
+| **Team Lead** | Ayush Patel — 23dit040@charusat.edu.in |
+| **Members** | Nancy , Ansh , Arpita |
 
 ---
 
